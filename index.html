@@ -171,7 +171,7 @@ function selectGrade(g, btn) {
   activeGrade = g;
   document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  const placeholder = g === 'g1' ? 'e.g. 11001' : 'e.g. ';
+  const placeholder = g === 'g1' ? 'e.g. ' : 'e.g. ';
   document.getElementById('student-id').placeholder = placeholder;
   document.getElementById('student-id').value = '';
   document.getElementById('student-id').classList.remove('error');

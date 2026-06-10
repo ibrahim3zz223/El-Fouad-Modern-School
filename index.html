@@ -94,7 +94,7 @@ main{display:flex;align-items:flex-start;justify-content:center;padding:48px 16p
 <main id="main-area">
   <!-- SEARCH -->
   <div class="search-card" id="search-section">
-    <h1 class="school-title">El-Fouad Modern School</h1>
+    <h1 class="school-title">El-Fouad International School</h1>
     <p class="school-sub">Enter the student's Seat Number to view <span>Term Results.</span></p>
 
     <div class="grade-tabs">
@@ -106,7 +106,7 @@ main{display:flex;align-items:flex-start;justify-content:center;padding:48px 16p
       <label class="form-label" for="student-id">Seat Number</label>
       <div class="input-wrap">
         <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        <input class="id-input" type="text" id="student-id" placeholder="e.g. " autocomplete="off"/>
+        <input class="id-input" type="text" id="student-id" placeholder="e.g. 11001" autocomplete="off"/>
       </div>
     </div>
 
@@ -142,9 +142,8 @@ main{display:flex;align-items:flex-start;justify-content:center;padding:48px 16p
       <thead>
         <tr>
           <th>SUBJECT</th>
-          <th class="center">TERM 1</th>
-          <th class="center">TERM 2</th>
-          <th class="center">AVG / MAX</th>
+          <th class="center">STUDENT SCORE</th>
+          <th class="center">MAX SCORE</th>
           <th class="center">GRADE</th>
         </tr>
       </thead>
@@ -171,7 +170,7 @@ function selectGrade(g, btn) {
   activeGrade = g;
   document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  const placeholder = g === 'g1' ? 'e.g. ' : 'e.g. ';
+  const placeholder = g === 'g1' ? 'e.g. 11001' : 'e.g. 21001';
   document.getElementById('student-id').placeholder = placeholder;
   document.getElementById('student-id').value = '';
   document.getElementById('student-id').classList.remove('error');
@@ -238,9 +237,8 @@ function showResults(student) {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${sub.name}</td>
-      <td class="center">${fmt(sub.t1)}</td>
-      <td class="center">${fmt(sub.t2)}</td>
-      <td class="center">${fmt(sub.score)} <span class="sub-score">/ ${sub.max}</span></td>
+      <td class="center">${fmt(sub.score)}</td>
+      <td class="center">${sub.max}</td>
       <td class="center"><span class="grade-dot g${sub.grade}">${sub.grade}</span></td>
     `;
     tbody.appendChild(tr);
@@ -251,9 +249,8 @@ function showResults(student) {
   tr.className = 'total-row';
   tr.innerHTML = `
     <td><strong>TOTAL</strong></td>
-    <td class="center">—</td>
-    <td class="center">—</td>
-    <td class="center"><strong>${fmt(student.total)} / ${student.total_max}</strong></td>
+    <td class="center"><strong>${fmt(student.total)}</strong></td>
+    <td class="center"><strong>${student.total_max}</strong></td>
     <td class="center"><strong>${pct}%</strong></td>
   `;
   tbody.appendChild(tr);

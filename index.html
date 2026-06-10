@@ -5,231 +5,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>El-Fouad International School — Term Results</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; min-height: 100vh; }
-
-  /* HEADER */
-  .header {
-    background: #fff;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0 32px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .header-left { display: flex; align-items: center; gap: 14px; }
-  .logo-wrap { display: flex; align-items: center; gap: 10px; }
-  .logo-img { height: 40px; }
-  .logo-divider { width: 1px; height: 32px; background: #d1d5db; }
-  .dept-label { font-size: 15px; font-weight: 600; color: #2563eb; }
-  .system-status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #6b7280; }
-  .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
-  /* MAIN */
-  main { display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px; min-height: calc(100vh - 64px); }
-
-  /* SEARCH CARD */
-  .search-card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 40px 48px 36px;
-    width: 100%;
-    max-width: 520px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    animation: fadeUp 0.4s ease;
-  }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-
-  .school-title { font-size: 24px; font-weight: 700; color: #111827; text-align: center; margin-bottom: 8px; }
-  .school-sub { font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 32px; }
-  .school-sub span { color: #2563eb; font-weight: 600; }
-
-  .form-group { margin-bottom: 20px; }
-  .form-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
-  .input-wrap { position: relative; }
-  .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
-  .id-input {
-    width: 100%; padding: 13px 14px 13px 42px;
-    border: 1.5px solid #d1d5db; border-radius: 10px;
-    font-size: 15px; color: #111827; outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .id-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
-  .id-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
-
-  .btn-search {
-    width: 100%; padding: 14px;
-    background: #2563eb; color: #fff;
-    border: none; border-radius: 10px;
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .btn-search:hover { background: #1d4ed8; }
-  .btn-search:active { transform: scale(0.98); }
-
-  .error-msg { color: #ef4444; font-size: 13px; text-align: center; margin-top: 12px; display: none; }
-  .db-version { font-size: 12px; color: #9ca3af; text-align: center; margin-top: 20px; }
-
-  /* RESULTS CARD */
-  .results-card {
-    background: #fff;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 720px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    overflow: hidden;
-    animation: fadeUp 0.4s ease;
-    display: none;
-  }
-
-  .student-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid #f3f4f6;
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  }
-  .student-left { display: flex; align-items: center; gap: 16px; }
-  .avatar {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: #eff6ff; display: flex; align-items: center; justify-content: center;
-    font-size: 17px; font-weight: 700; color: #2563eb; flex-shrink: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-  }
-  .student-name { font-size: 17px; font-weight: 700; color: #111827; direction: rtl; margin-bottom: 3px; }
-  .student-meta { font-size: 13px; color: #6b7280; }
-  .student-meta span { color: #374151; }
-  .status-badge {
-    text-align: center; flex-shrink: 0;
-  }
-  .status-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .status-value { font-size: 14px; font-weight: 700; color: #22c55e; }
-
-  /* GRADES TABLE */
-  .grades-table { width: 100%; border-collapse: collapse; }
-  .grades-table thead tr { background: #f9fafb; }
-  .grades-table th {
-    padding: 11px 20px;
-    font-size: 11px; font-weight: 700; color: #6b7280;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    text-align: left; border-bottom: 1px solid #f3f4f6;
-  }
-  .grades-table th:nth-child(2), .grades-table th:nth-child(3), .grades-table th:nth-child(4) { text-align: center; }
-  .grades-table td {
-    padding: 14px 20px;
-    font-size: 14px; color: #374151;
-    border-bottom: 1px solid #f9fafb;
-  }
-  .grades-table td:nth-child(2), .grades-table td:nth-child(3) { text-align: center; font-weight: 600; color: #111827; }
-  .grades-table td:nth-child(4) { text-align: center; }
-  .grades-table tbody tr:hover { background: #f9fafb; }
-  .grades-table tbody tr:last-child td { border-bottom: none; }
-  .subject-name { font-weight: 500; }
-
-  /* GRADE BADGE */
-  .grade-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 50%;
-    font-size: 13px; font-weight: 700;
-  }
-  .grade-A { background: #dcfce7; color: #166534; }
-  .grade-B { background: #dbeafe; color: #1e40af; }
-  .grade-C { background: #fef9c3; color: #854d0e; }
-  .grade-D { background: #fee2e2; color: #991b1b; }
-  .grade-F { background: #fca5a5; color: #7f1d1d; }
-
-  /* TOTAL ROW */
-  .total-row td { background: #f0f7ff !important; font-weight: 700 !important; color: #1e40af !important; border-top: 2px solid #dbeafe; }
-  .total-pct { font-size: 12px; color: #6b7280; margin-left: 4px; font-weight: 400; }
-
-  /* FOOTER ACTIONS */
-  .results-footer {
-    padding: 16px 24px;
-    background: #f9fafb;
-    border-top: 1px solid #f3f4f6;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    flex-wrap: wrap;
-  }
-  .footer-note { font-size: 12px; color: #9ca3af; font-style: italic; }
-  .footer-btns { display: flex; gap: 10px; }
-  .btn-new {
-    padding: 9px 18px; border-radius: 8px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    border: 1.5px solid #d1d5db; background: #fff; color: #374151;
-    transition: background 0.15s;
-  }
-  .btn-new:hover { background: #f9fafb; }
-  .btn-print {
-    padding: 9px 18px; border-radius: 8px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    border: none; background: #2563eb; color: #fff;
-    transition: background 0.15s;
-  }
-  .btn-print:hover { background: #1d4ed8; }
-
-  /* LOADING */
-  .loading { text-align: center; padding: 40px; display: none; }
-  .spinner { width: 36px; height: 36px; border: 3px solid #e5e7eb; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  @media print {
-    .header { display: none; }
-    .search-card { display: none !important; }
-    main { padding: 0; }
-    .results-footer { display: none; }
-    .results-card { box-shadow: none; max-width: 100%; }
-  }
-
-  @media (max-width: 600px) {
-    .search-card { padding: 28px 20px; }
-    .student-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .grades-table th, .grades-table td { padding: 10px 12px; font-size: 13px; }
-    main { padding: 24px 12px; }
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo-img{height:40px}
+.logo-divider{width:1px;height:32px;background:#d1d5db}
+.dept-label{font-size:15px;font-weight:600;color:#2563eb}
+.system-status{display:flex;align-items:center;gap:6px;font-size:13px;color:#6b7280}
+.status-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+main{display:flex;align-items:flex-start;justify-content:center;padding:48px 16px;min-height:calc(100vh - 64px)}
+.search-card{background:#fff;border-radius:16px;padding:40px 48px 36px;width:100%;max-width:520px;box-shadow:0 4px 24px rgba(0,0,0,.08);animation:fadeUp .4s ease;display:flex;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.school-title{font-size:24px;font-weight:700;color:#111827;text-align:center;margin-bottom:8px}
+.school-sub{font-size:14px;color:#6b7280;text-align:center;margin-bottom:28px}
+.school-sub span{color:#2563eb;font-weight:600}
+.grade-tabs{display:flex;gap:8px;margin-bottom:20px}
+.grade-tab{flex:1;padding:10px;border:1.5px solid #d1d5db;border-radius:10px;background:#fff;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .15s;text-align:center}
+.grade-tab.active{border-color:#2563eb;background:#eff6ff;color:#2563eb}
+.form-group{margin-bottom:20px}
+.form-label{font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;display:block}
+.input-wrap{position:relative}
+.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af}
+.id-input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid #d1d5db;border-radius:10px;font-size:15px;color:#111827;outline:none;transition:border-color .2s,box-shadow .2s}
+.id-input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.id-input.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+.btn-search{width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s}
+.btn-search:hover{background:#1d4ed8}
+.btn-search:active{transform:scale(.98)}
+.error-msg{color:#ef4444;font-size:13px;text-align:center;margin-top:12px;display:none}
+.db-version{font-size:12px;color:#9ca3af;text-align:center;margin-top:20px}
+/* RESULTS */
+.results-card{background:#fff;border-radius:16px;width:100%;max-width:800px;box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden;animation:fadeUp .4s ease;display:none}
+.student-header{padding:20px 24px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.student-left{display:flex;align-items:center;gap:16px}
+.avatar{width:52px;height:52px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#2563eb;flex-shrink:0}
+.student-name{font-size:17px;font-weight:700;color:#111827;direction:rtl;margin-bottom:3px}
+.student-meta{font-size:13px;color:#6b7280}
+.student-meta span{color:#374151}
+.grade-badge-header{background:#eff6ff;color:#1e40af;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:4px}
+.status-badge{text-align:center;flex-shrink:0}
+.status-label{font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.status-value{font-size:14px;font-weight:700;color:#22c55e}
+/* TABLE */
+.grades-table{width:100%;border-collapse:collapse}
+.grades-table thead tr{background:#f9fafb}
+.grades-table th{padding:11px 16px;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid #f3f4f6}
+.grades-table th.center{text-align:center}
+.grades-table td{padding:13px 16px;font-size:14px;color:#374151;border-bottom:1px solid #f9fafb}
+.grades-table td.center{text-align:center;font-weight:600;color:#111827}
+.grades-table tbody tr:hover{background:#fafafa}
+.grades-table tbody tr:last-child td{border-bottom:none}
+.sub-score{font-size:11px;color:#9ca3af;font-weight:400;display:block}
+.grade-dot{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;font-size:13px;font-weight:700}
+.gA{background:#dcfce7;color:#166534}
+.gB{background:#dbeafe;color:#1e40af}
+.gC{background:#fef9c3;color:#854d0e}
+.gD{background:#fee2e2;color:#991b1b}
+.gF{background:#fca5a5;color:#7f1d1d}
+.total-row td{background:#f0f7ff!important;font-weight:700!important;color:#1e40af!important;border-top:2px solid #dbeafe}
+/* FOOTER */
+.results-footer{padding:16px 24px;background:#f9fafb;border-top:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.footer-note{font-size:12px;color:#9ca3af;font-style:italic}
+.footer-btns{display:flex;gap:10px}
+.btn-new{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #d1d5db;background:#fff;color:#374151;transition:background .15s}
+.btn-new:hover{background:#f3f4f6}
+.btn-print{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:#2563eb;color:#fff;transition:background .15s}
+.btn-print:hover{background:#1d4ed8}
+/* LOADING */
+.loading{text-align:center;padding:40px;display:none}
+.spinner{width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media print{.header,.search-card,.results-footer{display:none!important}main{padding:0}.results-card{box-shadow:none;max-width:100%}}
+@media(max-width:600px){.search-card{padding:28px 20px}.grades-table th,.grades-table td{padding:10px 10px;font-size:12px}main{padding:24px 12px}}
 </style>
 </head>
 <body>
-
 <header class="header">
   <div class="header-left">
-    <div class="logo-wrap">
-      <img class="logo-img" src="https://elfouadinternationalschools.com/wp-content/uploads/2025/01/Untitled-2-Recovered-03.png" alt="El-Fouad" onerror="this.style.display='none'">
-      <div class="logo-divider"></div>
-      <span class="dept-label">IT Department</span>
-    </div>
+    <img class="logo-img" src="https://elfouadinternationalschools.com/wp-content/uploads/2025/01/Untitled-2-Recovered-03.png" alt="El-Fouad" onerror="this.style.display='none'">
+    <div class="logo-divider"></div>
+    <span class="dept-label">IT Department</span>
   </div>
-  <div class="system-status">
-    <div class="status-dot"></div>
-    System Online
-  </div>
+  <div class="system-status"><div class="status-dot"></div>System Online</div>
 </header>
 
 <main id="main-area">
   <!-- SEARCH -->
   <div class="search-card" id="search-section">
     <h1 class="school-title">El-Fouad International School</h1>
-    <p class="school-sub">Enter the student's ID to view <span>Term Results.</span></p>
+    <p class="school-sub">Enter the student's Seat Number to view <span>Term Results.</span></p>
+
+    <div class="grade-tabs">
+      <button class="grade-tab active" onclick="selectGrade('g1',this)">الأول الثانوي</button>
+      <button class="grade-tab" onclick="selectGrade('g2',this)">الثاني الثانوي</button>
+    </div>
 
     <div class="form-group">
-      <label class="form-label" for="student-id">Student ID Number</label>
+      <label class="form-label" for="student-id">Seat Number</label>
       <div class="input-wrap">
         <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        <input class="id-input" type="text" id="student-id" placeholder="e.g. 0000" autocomplete="off" />
+        <input class="id-input" type="text" id="student-id" placeholder="e.g. 11001" autocomplete="off"/>
       </div>
     </div>
 
-    <button class="btn-search" id="search-btn" onclick="searchStudent()">View Result</button>
-    <p class="error-msg" id="error-msg">⚠ Student ID not found. Please check and try again.</p>
-    <p class="db-version"></p>
-    <div class="social-links" style="text-align:left;">
-    <a href="https://www.facebook.com/Elfouadinternationalschool" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"
-             alt="Facebook"
-             width="40">
-    </a>
-</div>
+    <button class="btn-search" onclick="searchStudent()">View Result</button>
+    <p class="error-msg" id="error-msg">⚠ Seat number not found. Please check and try again.</p>
+    <p class="db-version">Database Version: 2026.1.27 (Updated)</p>
   </div>
 
   <!-- LOADING -->
@@ -242,10 +125,11 @@
   <div class="results-card" id="results-section">
     <div class="student-header">
       <div class="student-left">
-        <div class="avatar" id="avatar-initials">--</div>
+        <div class="avatar" id="av-init">--</div>
         <div>
-          <div class="student-name" id="result-name">--</div>
-          <div class="student-meta">ID: <span id="result-id">--</span> &nbsp;|&nbsp; Seat No: <span id="result-seat">--</span> &nbsp;|&nbsp; Section: <span id="result-section">--</span></div>
+          <div class="student-name" id="r-name">--</div>
+          <div class="student-meta">Seat No: <span id="r-seat">--</span></div>
+          <span class="grade-badge-header" id="r-grade-level">--</span>
         </div>
       </div>
       <div class="status-badge">
@@ -258,16 +142,17 @@
       <thead>
         <tr>
           <th>SUBJECT</th>
-          <th>STUDENT SCORE</th>
-          <th>MAX SCORE</th>
-          <th>GRADE</th>
+          <th class="center">TERM 1</th>
+          <th class="center">TERM 2</th>
+          <th class="center">AVG / MAX</th>
+          <th class="center">GRADE</th>
         </tr>
       </thead>
       <tbody id="grades-tbody"></tbody>
     </table>
 
     <div class="results-footer">
-      <span class="footer-note">Official Electronic Record.</span>
+      <span class="footer-note">Official Electronic Record — El-Fouad International School</span>
       <div class="footer-btns">
         <button class="btn-new" onclick="newSearch()">New Search</button>
         <button class="btn-print" onclick="window.print()">Print Report</button>
@@ -277,98 +162,99 @@
 </main>
 
 <script>
-const STUDENTS = {"31304051303293":{"name":"ابراهيم محمد ابراهيم امين ابراهيم موسي","sit_number":"7001","id":"31304051303293","section":"لغات","subjects":[{"name":"Arabic","score":96.5,"max":100,"grade":"A"},{"name":"Mathematics","score":97.5,"max":100,"grade":"A"},{"name":"Science","score":98.0,"max":100,"grade":"A"},{"name":"Social Studies","score":85.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":95.0,"max":100,"grade":"A"}],"total":476.0,"total_max":500},"31303241302874":{"name":"احمد محمد ابو الخير احمد السيد","sit_number":"7002","id":"31303241302874","section":"لغات","subjects":[{"name":"Arabic","score":94.0,"max":100,"grade":"A"},{"name":"Mathematics","score":94.5,"max":100,"grade":"A"},{"name":"Science","score":85.5,"max":100,"grade":"A"},{"name":"Social Studies","score":91.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":95.0,"max":100,"grade":"A"},{"name":"French/German","score":95.5,"max":100,"grade":"A"}],"total":460.0,"total_max":500},"31303071305253":{"name":"احمد محمد عبد الله عبد الرحمن","sit_number":"7003","id":"31303071305253","section":"لغات","subjects":[{"name":"Arabic","score":92.0,"max":100,"grade":"A"},{"name":"Mathematics","score":75.5,"max":100,"grade":"B"},{"name":"Science","score":79.0,"max":100,"grade":"B"},{"name":"Social Studies","score":79.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":84.5,"max":100,"grade":"B"}],"total":422.5,"total_max":500},"31212121318771":{"name":"احمد محمد يونس عبد الحفيظ السيد","sit_number":"7004","id":"31212121318771","section":"لغات","subjects":[{"name":"Arabic","score":94.5,"max":100,"grade":"A"},{"name":"Mathematics","score":85.0,"max":100,"grade":"A"},{"name":"Science","score":80.5,"max":100,"grade":"B"},{"name":"Social Studies","score":77.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":83.0,"max":100,"grade":"B"}],"total":435.5,"total_max":500},"31308021302255":{"name":"ادم محمد طارق محمد محمد سرحان","sit_number":"7005","id":"31308021302255","section":"لغات","subjects":[{"name":"Arabic","score":96.5,"max":100,"grade":"A"},{"name":"Mathematics","score":95.5,"max":100,"grade":"A"},{"name":"Science","score":85.0,"max":100,"grade":"A"},{"name":"Social Studies","score":93.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":83.0,"max":100,"grade":"B"}],"total":468.5,"total_max":500},"31307298801171":{"name":"ادهم احمد عبد الله السيد احمد الشرقاوي","sit_number":"7006","id":"31307298801171","section":"لغات","subjects":[{"name":"Arabic","score":96.0,"max":100,"grade":"A"},{"name":"Mathematics","score":91.0,"max":100,"grade":"A"},{"name":"Science","score":87.0,"max":100,"grade":"A"},{"name":"Social Studies","score":79.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":96.5,"max":100,"grade":"A"},{"name":"French/German","score":80.5,"max":100,"grade":"B"}],"total":449.5,"total_max":500},"31402021304998":{"name":"ادهم احمد محمد بهجت السيد ابراهيم عوض","sit_number":"7007","id":"31402021304998","section":"لغات","subjects":[{"name":"Arabic","score":81.5,"max":100,"grade":"B"},{"name":"Mathematics","score":79.0,"max":100,"grade":"B"},{"name":"Science","score":66.5,"max":100,"grade":"B"},{"name":"Social Studies","score":70.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":92.0,"max":100,"grade":"A"},{"name":"French/German","score":65.5,"max":100,"grade":"B"}],"total":389.5,"total_max":500},"31303021301133":{"name":"ادهم محمد احمد محمود علي علي بدر","sit_number":"7008","id":"31303021301133","section":"لغات","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":99.0,"max":100,"grade":"A"},{"name":"Science","score":90.5,"max":100,"grade":"A"},{"name":"Social Studies","score":99.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":92.0,"max":100,"grade":"A"}],"total":484.0,"total_max":500},"31306021300632":{"name":"ادهم محمود بدوي محمد احمد مسعود","sit_number":"7009","id":"31306021300632","section":"لغات","subjects":[{"name":"Arabic","score":93.5,"max":100,"grade":"A"},{"name":"Mathematics","score":92.25,"max":100,"grade":"A"},{"name":"Science","score":83.0,"max":100,"grade":"B"},{"name":"Social Studies","score":81.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":447.25,"total_max":500},"31311011313837":{"name":"اسر اسامة محمد محمد زكي محمد علي","sit_number":"7010","id":"31311011313837","section":"لغات","subjects":[{"name":"Arabic","score":81.0,"max":100,"grade":"B"},{"name":"Mathematics","score":66.5,"max":100,"grade":"B"},{"name":"Science","score":56.5,"max":100,"grade":"C"},{"name":"Social Studies","score":70.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":77.0,"max":100,"grade":"B"},{"name":"French/German","score":57.0,"max":100,"grade":"C"}],"total":351.5,"total_max":500},"31306241303632":{"name":"اسر زكي السيد ابراهيم حسانين","sit_number":"7011","id":"31306241303632","section":"لغات","subjects":[{"name":"Arabic","score":95.0,"max":100,"grade":"A"},{"name":"Mathematics","score":99.0,"max":100,"grade":"A"},{"name":"Science","score":85.5,"max":100,"grade":"A"},{"name":"Social Studies","score":90.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":94.0,"max":100,"grade":"A"}],"total":469.5,"total_max":500},"31309281300953":{"name":"اشرف اسلام سالم ابراهيم عبد النبي نصر","sit_number":"7012","id":"31309281300953","section":"لغات","subjects":[{"name":"Arabic","score":93.5,"max":100,"grade":"A"},{"name":"Mathematics","score":97.0,"max":100,"grade":"A"},{"name":"Science","score":83.0,"max":100,"grade":"B"},{"name":"Social Studies","score":94.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.5,"max":100,"grade":"A"},{"name":"French/German","score":100.0,"max":100,"grade":"A"}],"total":466.0,"total_max":500},"31312121306859":{"name":"باسل محمد فاروق امين محمود مجاهد","sit_number":"7013","id":"31312121306859","section":"لغات","subjects":[{"name":"Arabic","score":94.25,"max":100,"grade":"A"},{"name":"Mathematics","score":95.5,"max":100,"grade":"A"},{"name":"Science","score":91.5,"max":100,"grade":"A"},{"name":"Social Studies","score":94.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":98.0,"max":100,"grade":"A"}],"total":473.25,"total_max":500},"31306111302979":{"name":"تيم احمد عبد العزيز السيد محمد","sit_number":"7014","id":"31306111302979","section":"لغات","subjects":[{"name":"Arabic","score":99.0,"max":100,"grade":"A"},{"name":"Mathematics","score":99.5,"max":100,"grade":"A"},{"name":"Science","score":94.5,"max":100,"grade":"A"},{"name":"Social Studies","score":89.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":87.0,"max":100,"grade":"A"}],"total":482.0,"total_max":500},"31304221301916":{"name":"داني عادل سعيد جرجس رزق الله","sit_number":"7015","id":"31304221301916","section":"لغات","subjects":[{"name":"Arabic","score":100.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":98.5,"max":100,"grade":"A"},{"name":"Social Studies","score":99.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":99.0,"max":100,"grade":"A"}],"total":496.5,"total_max":500},"31304031200153":{"name":"زكريا اسلام زكريا عبد الدايم مجاهد","sit_number":"7016","id":"31304031200153","section":"لغات","subjects":[{"name":"Arabic","score":72.0,"max":100,"grade":"B"},{"name":"Mathematics","score":68.0,"max":100,"grade":"B"},{"name":"Science","score":64.5,"max":100,"grade":"C"},{"name":"Social Studies","score":79.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":75.5,"max":100,"grade":"B"},{"name":"French/German","score":76.5,"max":100,"grade":"B"}],"total":359.5,"total_max":500},"31311061305053":{"name":"زياد اسعد عبد الرحمن ابو هاشم محمد","sit_number":"7017","id":"31311061305053","section":"لغات","subjects":[{"name":"Arabic","score":92.0,"max":100,"grade":"A"},{"name":"Mathematics","score":80.0,"max":100,"grade":"B"},{"name":"Science","score":74.0,"max":100,"grade":"B"},{"name":"Social Studies","score":98.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":73.0,"max":100,"grade":"B"}],"total":442.0,"total_max":500},"31307071305356":{"name":"سفيان احمد ربيع عبده احمد","sit_number":"7018","id":"31307071305356","section":"لغات","subjects":[{"name":"Arabic","score":89.5,"max":100,"grade":"A"},{"name":"Mathematics","score":98.5,"max":100,"grade":"A"},{"name":"Science","score":90.5,"max":100,"grade":"A"},{"name":"Social Studies","score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":96.5,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":463.0,"total_max":500},"31308221303515":{"name":"شاهين محمد سمير حسيني شاهين","sit_number":"7019","id":"31308221303515","section":"لغات","subjects":[{"name":"Arabic","score":93.5,"max":100,"grade":"A"},{"name":"Mathematics","score":83.0,"max":100,"grade":"B"},{"name":"Science","score":86.0,"max":100,"grade":"A"},{"name":"Social Studies","score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":96.0,"max":100,"grade":"A"},{"name":"French/German","score":83.5,"max":100,"grade":"B"}],"total":446.5,"total_max":500},"31305122104374":{"name":"شريف احمد طارق السيد عبد الرحمن ","sit_number":"7020","id":"31305122104374","section":"لغات","subjects":[{"name":"Arabic","score":93.0,"max":100,"grade":"A"},{"name":"Mathematics","score":95.5,"max":100,"grade":"A"},{"name":"Science","score":92.0,"max":100,"grade":"A"},{"name":"Social Studies","score":87.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":89.5,"max":100,"grade":"A"}],"total":467.5,"total_max":500},"31306031301475":{"name":"عبد الرحمن طارق محمد عيسي النجدي","sit_number":"7021","id":"31306031301475","section":"لغات","subjects":[{"name":"Arabic","score":94.5,"max":100,"grade":"A"},{"name":"Mathematics","score":88.0,"max":100,"grade":"A"},{"name":"Science","score":73.0,"max":100,"grade":"B"},{"name":"Social Studies","score":80.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":83.0,"max":100,"grade":"B"}],"total":433.0,"total_max":500},"31401011336119":{"name":"عبد الله احمد عطية عبد الهادي عطية ","sit_number":"7022","id":"31401011336119","section":"لغات","subjects":[{"name":"Arabic","score":88.5,"max":100,"grade":"A"},{"name":"Mathematics","score":98.0,"max":100,"grade":"A"},{"name":"Science","score":77.5,"max":100,"grade":"B"},{"name":"Social Studies","score":79.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":95.5,"max":100,"grade":"A"},{"name":"French/German","score":76.5,"max":100,"grade":"B"}],"total":438.5,"total_max":500},"31404011309692":{"name":"علي احمد علي نظمي امين مصطفي","sit_number":"7023","id":"31404011309692","section":"لغات","subjects":[{"name":"Arabic","score":85.0,"max":100,"grade":"A"},{"name":"Mathematics","score":82.0,"max":100,"grade":"B"},{"name":"Science","score":57.5,"max":100,"grade":"C"},{"name":"Social Studies","score":64.0,"max":100,"grade":"C"},{"name":"English (O.L)","score":80.5,"max":100,"grade":"B"},{"name":"French/German","score":80.0,"max":100,"grade":"B"}],"total":369.0,"total_max":500},"31212201306219":{"name":"علي احمد ممدوح احمد محمود عودة ","sit_number":"7024","id":"31212201306219","section":"لغات","subjects":[{"name":"Arabic","score":99.0,"max":100,"grade":"A"},{"name":"Mathematics","score":98.0,"max":100,"grade":"A"},{"name":"Science","score":85.5,"max":100,"grade":"A"},{"name":"Social Studies","score":92.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":96.0,"max":100,"grade":"A"},{"name":"French/German","score":83.0,"max":100,"grade":"B"}],"total":471.0,"total_max":500},"31309091302119":{"name":"علي عبد الغني عبد الغني ابو شرخ محمد ","sit_number":"7025","id":"31309091302119","section":"لغات","subjects":[{"name":"Arabic","score":90.5,"max":100,"grade":"A"},{"name":"Mathematics","score":91.0,"max":100,"grade":"A"},{"name":"Science","score":80.5,"max":100,"grade":"B"},{"name":"Social Studies","score":80.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":95.0,"max":100,"grade":"A"},{"name":"French/German","score":64.5,"max":100,"grade":"C"}],"total":437.0,"total_max":500},"31308011319818":{"name":"عمر صقر محمد عبد الرحمن صقر","sit_number":"7026","id":"31308011319818","section":"لغات","subjects":[{"name":"Arabic","score":81.5,"max":100,"grade":"B"},{"name":"Mathematics","score":65.0,"max":100,"grade":"B"},{"name":"Science","score":63.5,"max":100,"grade":"C"},{"name":"Social Studies","score":74.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":80.0,"max":100,"grade":"B"},{"name":"French/German","score":85.5,"max":100,"grade":"A"}],"total":364.0,"total_max":500},"31310101300479":{"name":"عمر محمد عبد الخالق ابو المعاطي","sit_number":"7027","id":"31310101300479","section":"لغات","subjects":[{"name":"Arabic","score":98.0,"max":100,"grade":"A"},{"name":"Mathematics","score":99.0,"max":100,"grade":"A"},{"name":"Science","score":95.5,"max":100,"grade":"A"},{"name":"Social Studies","score":98.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":98.0,"max":100,"grade":"A"}],"total":490.5,"total_max":500},"31311051309018":{"name":"كيفن شادي كمال يعقوب ابراهيم","sit_number":"7028","id":"31311051309018","section":"لغات","subjects":[{"name":"Arabic","score":90.0,"max":100,"grade":"A"},{"name":"Mathematics","score":70.5,"max":100,"grade":"B"},{"name":"Science","score":65.0,"max":100,"grade":"B"},{"name":"Social Studies","score":81.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":84.5,"max":100,"grade":"B"},{"name":"French/German","score":79.5,"max":100,"grade":"B"}],"total":391.0,"total_max":500},"31305111301437":{"name":"مالك محمد مصطفي سعيد رفاعي","sit_number":"7029","id":"31305111301437","section":"لغات","subjects":[{"name":"Arabic","score":92.0,"max":100,"grade":"A"},{"name":"Mathematics","score":72.0,"max":100,"grade":"B"},{"name":"Science","score":65.0,"max":100,"grade":"B"},{"name":"Social Studies","score":75.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":79.5,"max":100,"grade":"B"},{"name":"French/German","score":79.0,"max":100,"grade":"B"}],"total":384.0,"total_max":500},"31212021303955":{"name":"محمد احمد ربيع محمد محمد سيد احمد","sit_number":"7030","id":"31212021303955","section":"لغات","subjects":[{"name":"Arabic","score":94.5,"max":100,"grade":"A"},{"name":"Mathematics","score":93.5,"max":100,"grade":"A"},{"name":"Science","score":81.0,"max":100,"grade":"B"},{"name":"Social Studies","score":98.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":94.0,"max":100,"grade":"A"}],"total":466.5,"total_max":500},"31308041301832":{"name":"محمد احمد رفعت علي مسلم سلام","sit_number":"7031","id":"31308041301832","section":"لغات","subjects":[{"name":"Arabic","score":96.5,"max":100,"grade":"A"},{"name":"Mathematics","score":85.5,"max":100,"grade":"A"},{"name":"Science","score":92.0,"max":100,"grade":"A"},{"name":"Social Studies","score":76.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":99.5,"max":100,"grade":"A"},{"name":"French/German","score":79.0,"max":100,"grade":"B"}],"total":449.5,"total_max":500},"31312061302913":{"name":"محمد احمد صلاح مصلحي محمد","sit_number":"7032","id":"31312061302913","section":"لغات","subjects":[{"name":"Arabic","score":82.0,"max":100,"grade":"B"},{"name":"Mathematics","score":58.0,"max":100,"grade":"C"},{"name":"Science","score":62.5,"max":100,"grade":"C"},{"name":"Social Studies","score":73.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":82.5,"max":100,"grade":"B"},{"name":"French/German","score":69.0,"max":100,"grade":"B"}],"total":358.0,"total_max":500},"31309091304715":{"name":"محمد احمد محمد السيد عبد الله محمد","sit_number":"7033","id":"31309091304715","section":"لغات","subjects":[{"name":"Arabic","score":86.75,"max":100,"grade":"A"},{"name":"Mathematics","score":54.0,"max":100,"grade":"C"},{"name":"Science","score":57.0,"max":100,"grade":"C"},{"name":"Social Studies","score":79.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":85.5,"max":100,"grade":"A"},{"name":"French/German","score":69.0,"max":100,"grade":"B"}],"total":362.25,"total_max":500},"31310241302951":{"name":"محمد حامد محمد الامين احمد هلال","sit_number":"7034","id":"31310241302951","section":"لغات","subjects":[{"name":"Arabic","score":100.0,"max":100,"grade":"A"},{"name":"Mathematics","score":96.5,"max":100,"grade":"A"},{"name":"Science","score":92.5,"max":100,"grade":"A"},{"name":"Social Studies","score":91.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":97.5,"max":100,"grade":"A"},{"name":"French/German","score":100.0,"max":100,"grade":"A"}],"total":477.5,"total_max":500},"31402171300079":{"name":"محمد عمرو محمد محمد السيد متولي","sit_number":"7035","id":"31402171300079","section":"لغات","subjects":[{"name":"Arabic","score":40.0,"max":100,"grade":"D"},{"name":"Mathematics","score":40.0,"max":100,"grade":"D"},{"name":"Science","score":46.0,"max":100,"grade":"D"},{"name":"Social Studies","score":40.0,"max":100,"grade":"D"},{"name":"English (O.L)","score":40.0,"max":100,"grade":"D"},{"name":"French/German","score":40.0,"max":100,"grade":"D"}],"total":206.0,"total_max":500},"31310201307756":{"name":"محمد هيثم فتحي امين اسماعيل","sit_number":"7036","id":"31310201307756","section":"لغات","subjects":[{"name":"Arabic","score":97.0,"max":100,"grade":"A"},{"name":"Mathematics","score":93.5,"max":100,"grade":"A"},{"name":"Science","score":94.0,"max":100,"grade":"A"},{"name":"Social Studies","score":98.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":96.0,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":478.5,"total_max":500},"31401081305512":{"name":"مروان محمد خيري عبد الحميد طنطاوي","sit_number":"7037","id":"31401081305512","section":"لغات","subjects":[{"name":"Arabic","score":80.75,"max":100,"grade":"B"},{"name":"Mathematics","score":74.5,"max":100,"grade":"B"},{"name":"Science","score":72.5,"max":100,"grade":"B"},{"name":"Social Studies","score":80.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":90.0,"max":100,"grade":"A"},{"name":"French/German","score":77.0,"max":100,"grade":"B"}],"total":398.25,"total_max":500},"31312121306832":{"name":"مروان محمد فاروق امين محمود مجاهد","sit_number":"7038","id":"31312121306832","section":"لغات","subjects":[{"name":"Arabic","score":89.5,"max":100,"grade":"A"},{"name":"Mathematics","score":98.0,"max":100,"grade":"A"},{"name":"Science","score":88.5,"max":100,"grade":"A"},{"name":"Social Studies","score":90.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":90.5,"max":100,"grade":"A"}],"total":466.0,"total_max":500},"31310128801151":{"name":"مصطفي محمد حسني يوسف عبد السلام","sit_number":"7039","id":"31310128801151","section":"لغات","subjects":[{"name":"Arabic","score":79.75,"max":100,"grade":"B"},{"name":"Mathematics","score":77.0,"max":100,"grade":"B"},{"name":"Science","score":70.5,"max":100,"grade":"B"},{"name":"Social Studies","score":75.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":70.5,"max":100,"grade":"B"}],"total":399.25,"total_max":500},"31304191601332":{"name":"مصطفي محمد مصطفي محمد النجار","sit_number":"7040","id":"31304191601332","section":"لغات","subjects":[{"name":"Arabic","score":95.0,"max":100,"grade":"A"},{"name":"Mathematics","score":89.5,"max":100,"grade":"A"},{"name":"Science","score":75.0,"max":100,"grade":"B"},{"name":"Social Studies","score":97.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":93.0,"max":100,"grade":"A"},{"name":"French/German","score":79.0,"max":100,"grade":"B"}],"total":450.0,"total_max":500},"31303131304739":{"name":"مصطفي محمود فوزي عبد العليم محمد","sit_number":"7041","id":"31303131304739","section":"لغات","subjects":[{"name":"Arabic","score":100.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":95.5,"max":100,"grade":"A"},{"name":"Social Studies","score":95.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":99.5,"max":100,"grade":"A"}],"total":490.5,"total_max":500},"31305161300474":{"name":"ياسين كريم جمعه حسين محمد","sit_number":"7042","id":"31305161300474","section":"لغات","subjects":[{"name":"Arabic","score":79.5,"max":100,"grade":"B"},{"name":"Mathematics","score":58.5,"max":100,"grade":"C"},{"name":"Science","score":65.5,"max":100,"grade":"B"},{"name":"Social Studies","score":65.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":74.5,"max":100,"grade":"B"},{"name":"French/German","score":76.5,"max":100,"grade":"B"}],"total":343.0,"total_max":500},"31308161303413":{"name":"ياسين هاني محمد نجيب فهمي محجوب","sit_number":"7043","id":"31308161303413","section":"لغات","subjects":[{"name":"Arabic","score":88.0,"max":100,"grade":"A"},{"name":"Mathematics","score":72.0,"max":100,"grade":"B"},{"name":"Science","score":66.0,"max":100,"grade":"B"},{"name":"Social Studies","score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":66.0,"max":100,"grade":"B"}],"total":414.0,"total_max":500},"31305101301072":{"name":"يحيي عمرو مصطفي كامل ابو الفتح ","sit_number":"7044","id":"31305101301072","section":"لغات","subjects":[{"name":"Arabic","score":99.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":88.5,"max":100,"grade":"A"},{"name":"Social Studies","score":92.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":98.5,"max":100,"grade":"A"}],"total":479.5,"total_max":500},"31306111302952":{"name":"يزن عمرو محمد نجيب صديق محمد","sit_number":"7045","id":"31306111302952","section":"لغات","subjects":[{"name":"Arabic","score":99.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":99.0,"max":100,"grade":"A"},{"name":"Social Studies","score":98.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":99.0,"max":100,"grade":"A"}],"total":496.0,"total_max":500},"31306021301639":{"name":"يوسف احمد صبحي محمد السيد حجاب","sit_number":"7046","id":"31306021301639","section":"لغات","subjects":[{"name":"Arabic","score":95.0,"max":100,"grade":"A"},{"name":"Mathematics","score":93.5,"max":100,"grade":"A"},{"name":"Science","score":95.0,"max":100,"grade":"A"},{"name":"Social Studies","score":90.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.5,"max":100,"grade":"A"},{"name":"French/German","score":96.5,"max":100,"grade":"A"}],"total":473.0,"total_max":500},"31310101201594":{"name":"يوسف انطونيوس رفقي وهيب بسطورس","sit_number":"7047","id":"31310101201594","section":"لغات","subjects":[{"name":"Arabic","score":96.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":100.0,"max":100,"grade":"A"},{"name":"Social Studies","score":96.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":100.0,"max":100,"grade":"A"}],"total":492.0,"total_max":500},"31401018801151":{"name":"يوسف ايمن عبد المعطي عبد الغني مصباح","sit_number":"7048","id":"31401018801151","section":"لغات","subjects":[{"name":"Arabic","score":93.0,"max":100,"grade":"A"},{"name":"Mathematics","score":78.0,"max":100,"grade":"B"},{"name":"Science","score":84.5,"max":100,"grade":"B"},{"name":"Social Studies","score":89.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":86.5,"max":100,"grade":"A"}],"total":443.5,"total_max":500},"31305081301674":{"name":"يوسف حازم صبحي سليمان حسين","sit_number":"7049","id":"31305081301674","section":"لغات","subjects":[{"name":"Arabic","score":95.25,"max":100,"grade":"A"},{"name":"Mathematics","score":74.75,"max":100,"grade":"B"},{"name":"Science","score":71.0,"max":100,"grade":"B"},{"name":"Social Studies","score":84.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":62.0,"max":100,"grade":"C"}],"total":425.0,"total_max":500},"31309251304393":{"name":"يوسف هاني محمد عبد الوهاب عزب","sit_number":"7050","id":"31309251304393","section":"لغات","subjects":[{"name":"Arabic","score":88.25,"max":100,"grade":"A"},{"name":"Mathematics","score":76.5,"max":100,"grade":"B"},{"name":"Science","score":63.0,"max":100,"grade":"C"},{"name":"Social Studies","score":89.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":93.5,"max":100,"grade":"A"},{"name":"French/German","score":73.0,"max":100,"grade":"B"}],"total":410.75,"total_max":500},"31307011211727":{"name":"اسيل محمد ابراهيم حسانين حسانين","sit_number":"7051","id":"31307011211727","section":"لغات","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":95.0,"max":100,"grade":"A"},{"name":"Science","score":75.5,"max":100,"grade":"B"},{"name":"Social Studies","score":89.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.5,"max":100,"grade":"A"},{"name":"French/German","score":84.5,"max":100,"grade":"B"}],"total":456.5,"total_max":500},"31312151202268":{"name":"اسيل وائل صبري ابراهيم حامد","sit_number":"7052","id":"31312151202268","section":"لغات","subjects":[{"name":"Arabic","score":91.25,"max":100,"grade":"A"},{"name":"Mathematics","score":81.0,"max":100,"grade":"B"},{"name":"Science","score":65.0,"max":100,"grade":"B"},{"name":"Social Studies","score":85.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":95.0,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":417.25,"total_max":500},"31308221300389":{"name":"الما محمد فوزي السعيد محمد متولي","sit_number":"7053","id":"31308221300389","section":"لغات","subjects":[{"name":"Arabic","score":94.5,"max":100,"grade":"A"},{"name":"Mathematics","score":76.5,"max":100,"grade":"B"},{"name":"Science","score":76.5,"max":100,"grade":"B"},{"name":"Social Studies","score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":97.5,"max":100,"grade":"A"},{"name":"French/German","score":73.5,"max":100,"grade":"B"}],"total":433.0,"total_max":500},"31309161305625":{"name":"الين محمد احمد عبده علي","sit_number":"7054","id":"31309161305625","section":"لغات","subjects":[{"name":"Arabic","score":87.5,"max":100,"grade":"A"},{"name":"Mathematics","score":67.5,"max":100,"grade":"B"},{"name":"Science","score":63.0,"max":100,"grade":"C"},{"name":"Social Studies","score":72.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":88.0,"max":100,"grade":"A"},{"name":"French/German","score":71.5,"max":100,"grade":"B"}],"total":378.0,"total_max":500},"31308128800827":{"name":"بركسام ايهاب جمال فرج محمد سلامه ","sit_number":"7055","id":"31308128800827","section":"لغات","subjects":[{"name":"Arabic","score":82.5,"max":100,"grade":"B"},{"name":"Mathematics","score":56.5,"max":100,"grade":"C"},{"name":"Science","score":61.0,"max":100,"grade":"C"},{"name":"Social Studies","score":76.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":81.5,"max":100,"grade":"B"},{"name":"French/German","score":65.5,"max":100,"grade":"B"}],"total":357.5,"total_max":500},"31308011202503":{"name":"جاسمين رائد رشدي همام محمد البهيدي","sit_number":"7056","id":"31308011202503","section":"لغات","subjects":[{"name":"Arabic","score":94.75,"max":100,"grade":"A"},{"name":"Mathematics","score":93.5,"max":100,"grade":"A"},{"name":"Science","score":84.5,"max":100,"grade":"B"},{"name":"Social Studies","score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":87.0,"max":100,"grade":"A"}],"total":457.75,"total_max":500},"31307090101184":{"name":"جنا كمال ابراهيم وصفي احمد مرسي","sit_number":"7057","id":"31307090101184","section":"لغات","subjects":[{"name":"Arabic","score":92.5,"max":100,"grade":"A"},{"name":"Mathematics","score":94.0,"max":100,"grade":"A"},{"name":"Science","score":81.5,"max":100,"grade":"B"},{"name":"Social Studies","score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":96.0,"max":100,"grade":"A"},{"name":"French/German","score":94.5,"max":100,"grade":"A"}],"total":452.0,"total_max":500},"31306071302067":{"name":"جني محمد محمود مختار محمد","sit_number":"7058","id":"31306071302067","section":"لغات","subjects":[{"name":"Arabic","score":89.75,"max":100,"grade":"A"},{"name":"Mathematics","score":85.5,"max":100,"grade":"A"},{"name":"Science","score":78.0,"max":100,"grade":"B"},{"name":"Social Studies","score":82.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":84.5,"max":100,"grade":"B"}],"total":434.25,"total_max":500},"31301268800628":{"name":"جومانا احمد جمال فرج محمد سلامه","sit_number":"7059","id":"31301268800628","section":"لغات","subjects":[{"name":"Arabic","score":86.0,"max":100,"grade":"A"},{"name":"Mathematics","score":77.0,"max":100,"grade":"B"},{"name":"Science","score":74.0,"max":100,"grade":"B"},{"name":"Social Studies","score":76.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":81.75,"max":100,"grade":"B"},{"name":"French/German","score":79.0,"max":100,"grade":"B"}],"total":394.75,"total_max":500},"31303031313148":{"name":"حلا احمد محمد عبد الحميد علي الاشقر","sit_number":"7060","id":"31303031313148","section":"لغات","subjects":[{"name":"Arabic","score":89.0,"max":100,"grade":"A"},{"name":"Mathematics","score":94.0,"max":100,"grade":"A"},{"name":"Science","score":79.0,"max":100,"grade":"B"},{"name":"Social Studies","score":76.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":96.5,"max":100,"grade":"A"},{"name":"French/German","score":84.5,"max":100,"grade":"B"}],"total":434.5,"total_max":500},"31307121301721":{"name":"رقية ايمن رمضان صابر سليم الحريري","sit_number":"7061","id":"31307121301721","section":"لغات","subjects":[{"name":"Arabic","score":96.0,"max":100,"grade":"A"},{"name":"Mathematics","score":72.0,"max":100,"grade":"B"},{"name":"Science","score":84.5,"max":100,"grade":"B"},{"name":"Social Studies","score":93.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":89.0,"max":100,"grade":"A"}],"total":442.5,"total_max":500},"31304171303149":{"name":"رودينا محمد السيد ابو طالب السيد","sit_number":"7062","id":"31304171303149","section":"لغات","subjects":[{"name":"Arabic","score":95.5,"max":100,"grade":"A"},{"name":"Mathematics","score":97.0,"max":100,"grade":"A"},{"name":"Science","score":100.0,"max":100,"grade":"A"},{"name":"Social Studies","score":87.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":85.5,"max":100,"grade":"A"}],"total":479.5,"total_max":500},"31402201303566":{"name":"رونزي محمد شاهين محمد حفني","sit_number":"7063","id":"31402201303566","section":"لغات","subjects":[{"name":"Arabic","score":97.0,"max":100,"grade":"A"},{"name":"Mathematics","score":99.5,"max":100,"grade":"A"},{"name":"Science","score":93.0,"max":100,"grade":"A"},{"name":"Social Studies","score":88.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":97.0,"max":100,"grade":"A"},{"name":"French/German","score":91.5,"max":100,"grade":"A"}],"total":475.0,"total_max":500},"31309012103203":{"name":"ريتال خالد عبد الحميد عطية محمد غريب","sit_number":"7064","id":"31309012103203","section":"لغات","subjects":[{"name":"Arabic","score":93.5,"max":100,"grade":"A"},{"name":"Mathematics","score":95.0,"max":100,"grade":"A"},{"name":"Science","score":94.0,"max":100,"grade":"A"},{"name":"Social Studies","score":89.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":94.5,"max":100,"grade":"A"}],"total":469.5,"total_max":500},"31305101201485":{"name":"ريتال محمد كمال محمد الطنطاوي","sit_number":"7065","id":"31305101201485","section":"لغات","subjects":[{"name":"Arabic","score":96.5,"max":100,"grade":"A"},{"name":"Mathematics","score":89.5,"max":100,"grade":"A"},{"name":"Science","score":90.0,"max":100,"grade":"A"},{"name":"Social Studies","score":86.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":95.0,"max":100,"grade":"A"}],"total":460.0,"total_max":500},"31310301306005":{"name":"ريناد رائد ربيع عبده حسن","sit_number":"7066","id":"31310301306005","section":"لغات","subjects":[{"name":"Arabic","score":91.0,"max":100,"grade":"A"},{"name":"Mathematics","score":92.5,"max":100,"grade":"A"},{"name":"Science","score":82.0,"max":100,"grade":"B"},{"name":"Social Studies","score":87.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":90.5,"max":100,"grade":"A"},{"name":"French/German","score":87.0,"max":100,"grade":"A"}],"total":443.5,"total_max":500},"31401211300402":{"name":"سارة محمد الصادق محمد الصادق","sit_number":"7067","id":"31401211300402","section":"لغات","subjects":[{"name":"Arabic","score":93.0,"max":100,"grade":"A"},{"name":"Mathematics","score":82.0,"max":100,"grade":"B"},{"name":"Science","score":80.0,"max":100,"grade":"B"},{"name":"Social Studies","score":84.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":94.5,"max":100,"grade":"A"},{"name":"French/German","score":88.5,"max":100,"grade":"A"}],"total":434.0,"total_max":500},"31308011319427":{"name":"سجي جمال محمد منصور السيد","sit_number":"7068","id":"31308011319427","section":"لغات","subjects":[{"name":"Arabic","score":93.75,"max":100,"grade":"A"},{"name":"Mathematics","score":89.0,"max":100,"grade":"A"},{"name":"Science","score":91.5,"max":100,"grade":"A"},{"name":"Social Studies","score":85.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":90.0,"max":100,"grade":"A"}],"total":459.75,"total_max":500},"31311061303484":{"name":"سيلا احمد ابراهيم احمد محمد سعيد","sit_number":"7069","id":"31311061303484","section":"لغات","subjects":[{"name":"Arabic","score":93.5,"max":100,"grade":"A"},{"name":"Mathematics","score":93.0,"max":100,"grade":"A"},{"name":"Science","score":83.5,"max":100,"grade":"B"},{"name":"Social Studies","score":87.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.5,"max":100,"grade":"A"},{"name":"French/German","score":77.5,"max":100,"grade":"B"}],"total":456.0,"total_max":500},"31304101201209":{"name":"شذي وائل حمدي فتحي السعيد حسن طراد","sit_number":"7070","id":"31304101201209","section":"لغات","subjects":[{"name":"Arabic","score":98.5,"max":100,"grade":"A"},{"name":"Mathematics","score":88.0,"max":100,"grade":"A"},{"name":"Science","score":95.5,"max":100,"grade":"A"},{"name":"Social Studies","score":96.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":96.0,"max":100,"grade":"A"}],"total":478.0,"total_max":500},"31305011313586":{"name":"صبا محمد ابو النجا سماحي ابراهيم","sit_number":"7071","id":"31305011313586","section":"لغات","subjects":[{"name":"Arabic","score":95.0,"max":100,"grade":"A"},{"name":"Mathematics","score":85.0,"max":100,"grade":"A"},{"name":"Science","score":82.0,"max":100,"grade":"B"},{"name":"Social Studies","score":89.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":98.0,"max":100,"grade":"A"},{"name":"French/German","score":80.0,"max":100,"grade":"B"}],"total":449.0,"total_max":500},"31307051300048":{"name":"عاليه محمد خالد صالح محمد","sit_number":"7072","id":"31307051300048","section":"لغات","subjects":[{"name":"Arabic","score":97.0,"max":100,"grade":"A"},{"name":"Mathematics","score":86.5,"max":100,"grade":"A"},{"name":"Science","score":81.5,"max":100,"grade":"B"},{"name":"Social Studies","score":88.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":82.0,"max":100,"grade":"B"}],"total":452.5,"total_max":500},"31401271302102":{"name":"علياء حازم علي عيسي علي شعيشع","sit_number":"7073","id":"31401271302102","section":"لغات","subjects":[{"name":"Arabic","score":98.5,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":96.5,"max":100,"grade":"A"},{"name":"Social Studies","score":94.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":97.0,"max":100,"grade":"A"}],"total":489.0,"total_max":500},"31307291203546":{"name":"كنزي محمد محمد احمد محمد عبد الخالق","sit_number":"7074","id":"31307291203546","section":"لغات","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":98.5,"max":100,"grade":"A"},{"name":"Science","score":92.0,"max":100,"grade":"A"},{"name":"Social Studies","score":95.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":98.0,"max":100,"grade":"A"}],"total":482.0,"total_max":500},"31302201305122":{"name":"لارا اسامة شعبان ياسين محمد شعبان","sit_number":"7075","id":"31302201305122","section":"لغات","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":98.5,"max":100,"grade":"A"},{"name":"Social Studies","score":96.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":95.0,"max":100,"grade":"A"}],"total":492.5,"total_max":500},"31402151202542":{"name":"لارا محمد السعيد كمال السعيد حطبه","sit_number":"7076","id":"31402151202542","section":"لغات","subjects":[{"name":"Arabic","score":94.25,"max":100,"grade":"A"},{"name":"Mathematics","score":85.5,"max":100,"grade":"A"},{"name":"Science","score":86.0,"max":100,"grade":"A"},{"name":"Social Studies","score":80.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":90.5,"max":100,"grade":"A"},{"name":"French/German","score":82.5,"max":100,"grade":"B"}],"total":436.75,"total_max":500},"31308311201983":{"name":"لارا محمد عبد الرحمن محمد علي معروف","sit_number":"7077","id":"31308311201983","section":"لغات","subjects":[{"name":"Arabic","score":93.75,"max":100,"grade":"A"},{"name":"Mathematics","score":86.0,"max":100,"grade":"A"},{"name":"Science","score":82.0,"max":100,"grade":"B"},{"name":"Social Studies","score":79.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":94.0,"max":100,"grade":"A"},{"name":"French/German","score":80.5,"max":100,"grade":"B"}],"total":435.25,"total_max":500},"31305121301303":{"name":"لارا محمد مصطفي محمود تركيا","sit_number":"7078","id":"31305121301303","section":"لغات","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":92.5,"max":100,"grade":"A"},{"name":"Science","score":98.0,"max":100,"grade":"A"},{"name":"Social Studies","score":86.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":92.5,"max":100,"grade":"A"}],"total":473.5,"total_max":500},"31303031313067":{"name":"لمار محمد هاشم مدبولي محمد غريب","sit_number":"7079","id":"31303031313067","section":"لغات","subjects":[{"name":"Arabic","score":96.5,"max":100,"grade":"A"},{"name":"Mathematics","score":98.5,"max":100,"grade":"A"},{"name":"Science","score":87.5,"max":100,"grade":"A"},{"name":"Social Studies","score":88.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":95.0,"max":100,"grade":"A"}],"total":471.0,"total_max":500},"31402081300169":{"name":"لمي محمد فؤاد عبد المبدي رضوان","sit_number":"7080","id":"31402081300169","section":"لغات","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":96.0,"max":100,"grade":"A"},{"name":"Science","score":88.5,"max":100,"grade":"A"},{"name":"Social Studies","score":85.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":466.5,"total_max":500},"31309091303301":{"name":"ليان محمد عبد الوهاب السيد عطية","sit_number":"7081","id":"31309091303301","section":"لغات","subjects":[{"name":"Arabic","score":99.0,"max":100,"grade":"A"},{"name":"Mathematics","score":97.0,"max":100,"grade":"A"},{"name":"Science","score":83.0,"max":100,"grade":"B"},{"name":"Social Studies","score":85.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":99.5,"max":100,"grade":"A"},{"name":"French/German","score":81.5,"max":100,"grade":"B"}],"total":464.0,"total_max":500},"31304201300085":{"name":"مايا عماد عبد الله حسن محمد","sit_number":"7082","id":"31304201300085","section":"لغات","subjects":[{"name":"Arabic","score":96.25,"max":100,"grade":"A"},{"name":"Mathematics","score":97.0,"max":100,"grade":"A"},{"name":"Science","score":80.0,"max":100,"grade":"B"},{"name":"Social Studies","score":82.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":99.0,"max":100,"grade":"A"},{"name":"French/German","score":92.0,"max":100,"grade":"A"}],"total":454.25,"total_max":500},"31307011302447":{"name":"مريم محمود السيد محمود مجد زيدان","sit_number":"7083","id":"31307011302447","section":"لغات","subjects":[{"name":"Arabic","score":92.75,"max":100,"grade":"A"},{"name":"Mathematics","score":96.0,"max":100,"grade":"A"},{"name":"Science","score":65.0,"max":100,"grade":"B"},{"name":"Social Studies","score":81.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":95.5,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":430.75,"total_max":500},"31303231301462":{"name":"ملك هاني حسن منصور عبد العال","sit_number":"7084","id":"31303231301462","section":"لغات","subjects":[{"name":"Arabic","score":78.5,"max":100,"grade":"B"},{"name":"Mathematics","score":74.0,"max":100,"grade":"B"},{"name":"Science","score":57.0,"max":100,"grade":"C"},{"name":"Social Studies","score":82.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":67.0,"max":100,"grade":"B"},{"name":"French/German","score":62.5,"max":100,"grade":"C"}],"total":358.5,"total_max":500},"31311271301247":{"name":"مني شريف محمد نبيل محمد مهدي","sit_number":"7085","id":"31311271301247","section":"لغات","subjects":[{"name":"Arabic","score":95.5,"max":100,"grade":"A"},{"name":"Mathematics","score":97.5,"max":100,"grade":"A"},{"name":"Science","score":82.0,"max":100,"grade":"B"},{"name":"Social Studies","score":88.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":96.0,"max":100,"grade":"A"},{"name":"French/German","score":88.0,"max":100,"grade":"A"}],"total":459.5,"total_max":500},"31312101303861":{"name":"نايا محمد عبد الرحمن محمد الحناوي","sit_number":"7086","id":"31312101303861","section":"لغات","subjects":[{"name":"Arabic","score":95.5,"max":100,"grade":"A"},{"name":"Mathematics","score":93.0,"max":100,"grade":"A"},{"name":"Science","score":92.5,"max":100,"grade":"A"},{"name":"Social Studies","score":93.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":92.0,"max":100,"grade":"A"}],"total":474.0,"total_max":500},"31309301309464":{"name":"نور نبيل محمد العزازي ( انثي )","sit_number":"7087","id":"31309301309464","section":"لغات","subjects":[{"name":"Arabic","score":99.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":98.5,"max":100,"grade":"A"},{"name":"Social Studies","score":91.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":97.0,"max":100,"grade":"A"}],"total":489.0,"total_max":500},"31311251308326":{"name":"هنا عبد الله عبد النبي عبد الله مصطفي","sit_number":"7088","id":"31311251308326","section":"لغات","subjects":[{"name":"Arabic","score":92.5,"max":100,"grade":"A"},{"name":"Mathematics","score":82.0,"max":100,"grade":"B"},{"name":"Science","score":65.5,"max":100,"grade":"B"},{"name":"Social Studies","score":77.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":86.0,"max":100,"grade":"A"},{"name":"French/German","score":76.5,"max":100,"grade":"B"}],"total":403.0,"total_max":500},"31309301309502":{"name":"هنا نبيل محمد العزازي ","sit_number":"7089","id":"31309301309502","section":"لغات","subjects":[{"name":"Arabic","score":98.0,"max":100,"grade":"A"},{"name":"Mathematics","score":100.0,"max":100,"grade":"A"},{"name":"Science","score":91.0,"max":100,"grade":"A"},{"name":"Social Studies","score":82.0,"max":100,"grade":"B"},{"name":"English (O.L)","score":100.0,"max":100,"grade":"A"},{"name":"French/German","score":97.0,"max":100,"grade":"A"}],"total":471.0,"total_max":500},"31307041300457":{"name":"شريف اشرف محمد الهادي (عربي مميز)","sit_number":"7090","id":"31307041300457","section":"عربي","subjects":[{"name":"Arabic","score":67.5,"max":100,"grade":"B"},{"name":"Mathematics","score":49.0,"max":100,"grade":"D"},{"name":"Science","score":71.0,"max":100,"grade":"B"},{"name":"Social Studies","score":52.0,"max":100,"grade":"C"},{"name":"English (O.L)","score":61.0,"max":100,"grade":"C"},{"name":"French/German","score":55.0,"max":100,"grade":"C"}],"total":300.5,"total_max":500},"31204241304259":{"name":"علي محمود ابراهيم محمد (عربي مميز)","sit_number":"7091","id":"31204241304259","section":"عربي","subjects":[{"name":"Arabic","score":97.5,"max":100,"grade":"A"},{"name":"Mathematics","score":85.5,"max":100,"grade":"A"},{"name":"Science","score":94.5,"max":100,"grade":"A"},{"name":"Social Studies","score":89.5,"max":100,"grade":"A"},{"name":"English (O.L)","score":95.0,"max":100,"grade":"A"},{"name":"French/German","score":79.0,"max":100,"grade":"B"}],"total":462.0,"total_max":500},"31205071303615":{"name":"عمر جمال مصطفي السيد (عربي مميز)","sit_number":"7092","id":"31205071303615","section":"عربي","subjects":[{"name":"Arabic","score":80.0,"max":100,"grade":"B"},{"name":"Mathematics","score":71.5,"max":100,"grade":"B"},{"name":"Science","score":84.5,"max":100,"grade":"B"},{"name":"Social Studies","score":64.5,"max":100,"grade":"C"},{"name":"English (O.L)","score":82.0,"max":100,"grade":"B"},{"name":"French/German","score":66.5,"max":100,"grade":"B"}],"total":382.5,"total_max":500},"31205071303631":{"name":"محمد جمال مصطفي السيد (عربي مميز)","sit_number":"7093","id":"31205071303631","section":"عربي","subjects":[{"name":"Arabic","score":93.0,"max":100,"grade":"A"},{"name":"Mathematics","score":78.0,"max":100,"grade":"B"},{"name":"Science","score":97.0,"max":100,"grade":"A"},{"name":"Social Studies","score":77.5,"max":100,"grade":"B"},{"name":"English (O.L)","score":94.0,"max":100,"grade":"A"},{"name":"French/German","score":83.0,"max":100,"grade":"B"}],"total":439.5,"total_max":500},"31311051305047":{"name":"امنية اسلام فتحي عبد الحميد (عربي مميز ) ","sit_number":"7094","id":"31311051305047","section":"عربي","subjects":[{"name":"Arabic","score":94.0,"max":100,"grade":"A"},{"name":"Mathematics","score":77.0,"max":100,"grade":"B"},{"name":"Science","score":84.5,"max":100,"grade":"B"},{"name":"Social Studies","score":63.0,"max":100,"grade":"C"},{"name":"English (O.L)","score":90.5,"max":100,"grade":"A"},{"name":"French/German","score":82.5,"max":100,"grade":"B"}],"total":409.0,"total_max":500},"31305201307523":{"name":"جنه شريف عبد السلام محمود (عربي مميز)","sit_number":"7095","id":"31305201307523","section":"عربي","subjects":[{"name":"Arabic","score":98.5,"max":100,"grade":"A"},{"name":"Mathematics","score":90.5,"max":100,"grade":"A"},{"name":"Science","score":93.5,"max":100,"grade":"A"},{"name":"Social Studies","score":92.0,"max":100,"grade":"A"},{"name":"English (O.L)","score":87.0,"max":100,"grade":"A"},{"name":"French/German","score":76.0,"max":100,"grade":"B"}],"total":461.5,"total_max":500}};
+const STUDENTS_G1 = {"11001":{"name":"ابراهيم اسامة ابراهيم علي عطية","seat":"11001","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":80.0,"t2":79.5,"score":79.75,"max":100,"grade":"B"},{"name":"English (O.L)","t1":93.5,"t2":90.0,"score":91.75,"max":100,"grade":"A"},{"name":"Mathematics","t1":94.0,"t2":88.5,"score":91.25,"max":100,"grade":"A"},{"name":"Integrated Science","t1":89.5,"t2":87.0,"score":88.25,"max":100,"grade":"A"},{"name":"History","t1":81.0,"t2":83.0,"score":82.0,"max":100,"grade":"B"},{"name":"Philosophy","t1":66.5,"t2":71.0,"score":68.75,"max":100,"grade":"B"},{"name":"French/German","t1":77.0,"t2":76.0,"score":76.5,"max":100,"grade":"B"},{"name":"English (A.I)","t1":73.85,"t2":83.95,"score":78.9,"max":100,"grade":"B"},{"name":"Religion","t1":80.25,"t2":91.0,"score":85.62,"max":100,"grade":"A"},{"name":"Programming","t1":97.0,"t2":99.0,"score":98.0,"max":100,"grade":"A"}],"total":501.75,"total_max":600,"show_terms":true},"11002":{"name":"ادم محمد نعمان محمد قوره","seat":"11002","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":87.5,"t2":88.5,"score":88.0,"max":100,"grade":"A"},{"name":"English (O.L)","t1":90.0,"t2":93.5,"score":91.75,"max":100,"grade":"A"},{"name":"Mathematics","t1":94.5,"t2":92.5,"score":93.5,"max":100,"grade":"A"},{"name":"Integrated Science","t1":95.75,"t2":94.0,"score":94.88,"max":100,"grade":"A"},{"name":"History","t1":88.0,"t2":85.0,"score":86.5,"max":100,"grade":"A"},{"name":"Philosophy","t1":78.5,"t2":83.0,"score":80.75,"max":100,"grade":"B"},{"name":"French/German","t1":98.5,"t2":95.0,"score":96.75,"max":100,"grade":"A"},{"name":"English (A.I)","t1":95.1,"t2":88.5,"score":91.8,"max":100,"grade":"A"},{"name":"Religion","t1":89.5,"t2":93.0,"score":91.25,"max":100,"grade":"A"},{"name":"Programming","t1":100.0,"t2":95.5,"score":97.75,"max":100,"grade":"A"}],"total":535.38,"total_max":600,"show_terms":true},"11003":{"name":"جورج ادورد هنري جورجي","seat":"11003","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":79.0,"t2":75.0,"score":77.0,"max":100,"grade":"B"},{"name":"English (O.L)","t1":97.25,"t2":94.5,"score":95.88,"max":100,"grade":"A"},{"name":"Mathematics","t1":85.0,"t2":90.0,"score":87.5,"max":100,"grade":"A"},{"name":"Integrated Science","t1":89.0,"t2":78.0,"score":83.5,"max":100,"grade":"B"},{"name":"History","t1":82.0,"t2":81.0,"score":81.5,"max":100,"grade":"B"},{"name":"Philosophy","t1":69.0,"t2":66.0,"score":67.5,"max":100,"grade":"B"},{"name":"French/German","t1":86.0,"t2":88.0,"score":87.0,"max":100,"grade":"A"},{"name":"English (A.I)","t1":91.1,"t2":96.25,"score":93.67,"max":100,"grade":"A"},{"name":"Religion","t1":96.0,"t2":89.5,"score":92.75,"max":100,"grade":"A"},{"name":"Programming","t1":98.0,"t2":96.5,"score":97.25,"max":100,"grade":"A"}],"total":492.88,"total_max":600,"show_terms":true},"11004":{"name":"عبد الرحمن خالد سامي محمد مباشر","seat":"11004","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":90.0,"t2":87.5,"score":88.75,"max":100,"grade":"A"},{"name":"English (O.L)","t1":95.0,"t2":92.75,"score":93.88,"max":100,"grade":"A"},{"name":"Mathematics","t1":98.0,"t2":96.0,"score":97.0,"max":100,"grade":"A"},{"name":"Integrated Science","t1":94.75,"t2":92.5,"score":93.62,"max":100,"grade":"A"},{"name":"History","t1":87.0,"t2":89.0,"score":88.0,"max":100,"grade":"A"},{"name":"Philosophy","t1":85.0,"t2":76.0,"score":80.5,"max":100,"grade":"B"},{"name":"French/German","t1":100.0,"t2":98.0,"score":99.0,"max":100,"grade":"A"},{"name":"English (A.I)","t1":88.0,"t2":93.3,"score":90.65,"max":100,"grade":"A"},{"name":"Religion","t1":94.5,"t2":93.5,"score":94.0,"max":100,"grade":"A"},{"name":"Programming","t1":99.0,"t2":97.5,"score":98.25,"max":100,"grade":"A"}],"total":541.75,"total_max":600,"show_terms":true},"11005":{"name":"محمد احمد محمد علي اسماعيل","seat":"11005","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":77.0,"t2":72.5,"score":74.75,"max":100,"grade":"B"},{"name":"English (O.L)","t1":96.25,"t2":88.25,"score":92.25,"max":100,"grade":"A"},{"name":"Mathematics","t1":78.0,"t2":85.0,"score":81.5,"max":100,"grade":"B"},{"name":"Integrated Science","t1":92.0,"t2":72.5,"score":82.25,"max":100,"grade":"B"},{"name":"History","t1":74.0,"t2":85.0,"score":79.5,"max":100,"grade":"B"},{"name":"Philosophy","t1":64.0,"t2":64.5,"score":64.25,"max":100,"grade":"C"},{"name":"French/German","t1":89.0,"t2":88.0,"score":88.5,"max":100,"grade":"A"},{"name":"English (A.I)","t1":87.5,"t2":86.2,"score":86.85,"max":100,"grade":"A"},{"name":"Religion","t1":84.25,"t2":90.5,"score":87.38,"max":100,"grade":"A"},{"name":"Programming","t1":95.0,"t2":95.5,"score":95.25,"max":100,"grade":"A"}],"total":474.5,"total_max":600,"show_terms":true},"11006":{"name":"محمد احمد موسي مصطفي اسماعيل","seat":"11006","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":80.0,"t2":86.0,"score":83.0,"max":100,"grade":"B"},{"name":"English (O.L)","t1":89.25,"t2":89.0,"score":89.12,"max":100,"grade":"A"},{"name":"Mathematics","t1":84.0,"t2":87.0,"score":85.5,"max":100,"grade":"A"},{"name":"Integrated Science","t1":80.25,"t2":66.5,"score":73.38,"max":100,"grade":"B"},{"name":"History","t1":75.0,"t2":83.0,"score":79.0,"max":100,"grade":"B"},{"name":"Philosophy","t1":70.0,"t2":79.0,"score":74.5,"max":100,"grade":"B"},{"name":"French/German","t1":62.5,"t2":80.0,"score":71.25,"max":100,"grade":"B"},{"name":"English (A.I)","t1":69.4,"t2":75.2,"score":72.3,"max":100,"grade":"B"},{"name":"Religion","t1":92.0,"t2":95.5,"score":93.75,"max":100,"grade":"A"},{"name":"Programming","t1":93.0,"t2":95.0,"score":94.0,"max":100,"grade":"A"}],"total":484.5,"total_max":600,"show_terms":true},"11007":{"name":"محمود عمرو محمود ابو العزم حسنين","seat":"11007","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":83.0,"t2":80.5,"score":81.75,"max":100,"grade":"B"},{"name":"English (O.L)","t1":89.5,"t2":92.5,"score":91.0,"max":100,"grade":"A"},{"name":"Mathematics","t1":93.5,"t2":83.5,"score":88.5,"max":100,"grade":"A"},{"name":"Integrated Science","t1":86.5,"t2":83.5,"score":85.0,"max":100,"grade":"A"},{"name":"History","t1":86.0,"t2":83.0,"score":84.5,"max":100,"grade":"B"},{"name":"Philosophy","t1":79.5,"t2":73.0,"score":76.25,"max":100,"grade":"B"},{"name":"French/German","t1":89.5,"t2":77.0,"score":83.25,"max":100,"grade":"B"},{"name":"English (A.I)","t1":82.6,"t2":78.6,"score":80.6,"max":100,"grade":"B"},{"name":"Religion","t1":81.75,"t2":92.5,"score":87.12,"max":100,"grade":"A"},{"name":"Programming","t1":97.5,"t2":96.5,"score":97.0,"max":100,"grade":"A"}],"total":507.0,"total_max":600,"show_terms":true},"11008":{"name":"سلمي علاء علي علي علي الارضي","seat":"11008","grade_level":"الأول الثانوي","subjects":[{"name":"Arabic","t1":72.0,"t2":68.5,"score":70.25,"max":100,"grade":"B"},{"name":"English (O.L)","t1":63.5,"t2":47.5,"score":55.5,"max":100,"grade":"C"},{"name":"Mathematics","t1":77.0,"t2":81.0,"score":79.0,"max":100,"grade":"B"},{"name":"Integrated Science","t1":82.4,"t2":83.0,"score":82.7,"max":100,"grade":"B"},{"name":"History","t1":70.0,"t2":84.0,"score":77.0,"max":100,"grade":"B"},{"name":"Philosophy","t1":69.0,"t2":68.0,"score":68.5,"max":100,"grade":"B"},{"name":"French/German","t1":72.5,"t2":79.0,"score":75.75,"max":100,"grade":"B"},{"name":"English (A.I)","t1":51.0,"t2":49.8,"score":50.4,"max":100,"grade":"C"},{"name":"Religion","t1":69.5,"t2":76.0,"score":72.75,"max":100,"grade":"B"},{"name":"Programming","t1":82.5,"t2":79.0,"score":80.75,"max":100,"grade":"B"}],"total":432.95,"total_max":600,"show_terms":true}};
+const STUDENTS_G2 = {"21001":{"name":"ادم سامح سليم عبد السميع سليم محمد","seat":"21001","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":73.2,"t2":74.8,"score":74.0,"max":80,"grade":"A"},{"name":"English (O.L)","t1":59.4,"t2":58.8,"score":59.1,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":59.25,"t2":60.0,"score":59.62,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":60.0,"t2":59.5,"score":59.75,"max":60,"grade":"A"},{"name":"Physics","t1":58.65,"t2":54.52,"score":56.58,"max":60,"grade":"A"},{"name":"Chemistry","t1":60.0,"t2":59.0,"score":59.5,"max":60,"grade":"A"},{"name":"History","t1":59.4,"t2":60.0,"score":59.7,"max":60,"grade":"A"},{"name":"English (A.I)","t1":58.1,"t2":57.82,"score":48.3,"max":50,"grade":"A"},{"name":"French/German","t1":35.2,"t2":37.8,"score":36.5,"max":40,"grade":"A"},{"name":"Religion","t1":38.6,"t2":38.55,"score":38.58,"max":40,"grade":"A"},{"name":"Citizenship","t1":8.65,"t2":8.05,"score":8.35,"max":10,"grade":"B"}],"total":428.26,"total_max":440,"show_terms":true},"21002":{"name":"سيف محمود صبري السيد مصطفي","seat":"21002","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":68.8,"t2":74.8,"score":71.8,"max":80,"grade":"A"},{"name":"English (O.L)","t1":59.1,"t2":57.9,"score":58.5,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":56.25,"t2":58.5,"score":57.38,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":60.0,"t2":60.0,"score":60.0,"max":60,"grade":"A"},{"name":"Physics","t1":57.45,"t2":55.95,"score":56.7,"max":60,"grade":"A"},{"name":"Chemistry","t1":56.9,"t2":58.5,"score":57.7,"max":60,"grade":"A"},{"name":"History","t1":57.8,"t2":57.1,"score":57.45,"max":60,"grade":"A"},{"name":"English (A.I)","t1":57.6,"t2":57.7,"score":48.04,"max":50,"grade":"A"},{"name":"French/German","t1":36.8,"t2":32.4,"score":34.6,"max":40,"grade":"A"},{"name":"Religion","t1":37.6,"t2":39.1,"score":38.35,"max":40,"grade":"A"},{"name":"Citizenship","t1":8.55,"t2":8.7,"score":8.62,"max":10,"grade":"A"}],"total":419.52,"total_max":440,"show_terms":true},"21003":{"name":"علي هشام علي جمال الدين محمد غيث","seat":"21003","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":68.4,"t2":71.2,"score":69.8,"max":80,"grade":"A"},{"name":"English (O.L)","t1":57.1,"t2":56.6,"score":56.85,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":54.5,"t2":58.0,"score":56.25,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":58.75,"t2":58.5,"score":58.62,"max":60,"grade":"A"},{"name":"Physics","t1":48.9,"t2":49.35,"score":49.12,"max":60,"grade":"B"},{"name":"Chemistry","t1":55.5,"t2":57.75,"score":56.62,"max":60,"grade":"A"},{"name":"History","t1":59.4,"t2":50.95,"score":55.17,"max":60,"grade":"A"},{"name":"English (A.I)","t1":54.5,"t2":55.55,"score":45.85,"max":50,"grade":"A"},{"name":"French/German","t1":33.8,"t2":29.2,"score":31.5,"max":40,"grade":"B"},{"name":"Religion","t1":37.6,"t2":39.1,"score":38.35,"max":40,"grade":"A"},{"name":"Citizenship","t1":8.0,"t2":7.75,"score":7.88,"max":10,"grade":"B"}],"total":402.45,"total_max":440,"show_terms":true},"21004":{"name":"معتز عمرو عبد الرازق عباس علي","seat":"21004","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":58.8,"t2":66.0,"score":62.4,"max":80,"grade":"B"},{"name":"English (O.L)","t1":42.1,"t2":48.0,"score":45.05,"max":60,"grade":"B"},{"name":"Pure Mathematics","t1":53.5,"t2":52.0,"score":52.75,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":57.0,"t2":58.5,"score":57.75,"max":60,"grade":"A"},{"name":"Physics","t1":40.2,"t2":44.62,"score":42.41,"max":60,"grade":"B"},{"name":"Chemistry","t1":46.7,"t2":52.5,"score":49.6,"max":60,"grade":"B"},{"name":"History","t1":56.3,"t2":52.8,"score":54.55,"max":60,"grade":"A"},{"name":"English (A.I)","t1":40.3,"t2":37.8,"score":32.54,"max":50,"grade":"B"},{"name":"French/German","t1":27.2,"t2":28.4,"score":27.8,"max":40,"grade":"B"},{"name":"Religion","t1":35.4,"t2":32.2,"score":33.8,"max":40,"grade":"B"},{"name":"Citizenship","t1":7.7,"t2":8.1,"score":7.9,"max":10,"grade":"B"}],"total":364.51,"total_max":440,"show_terms":true},"21005":{"name":"ميخائيل مينا ملاك كامل جورجي","seat":"21005","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":58.0,"t2":59.4,"score":58.7,"max":80,"grade":"B"},{"name":"English (O.L)","t1":51.5,"t2":52.8,"score":52.15,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":45.5,"t2":56.5,"score":51.0,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":58.0,"t2":57.0,"score":57.5,"max":60,"grade":"A"},{"name":"Physics","t1":45.3,"t2":47.2,"score":46.25,"max":60,"grade":"B"},{"name":"Chemistry","t1":49.7,"t2":52.75,"score":51.23,"max":60,"grade":"A"},{"name":"History","t1":51.4,"t2":50.45,"score":50.92,"max":60,"grade":"B"},{"name":"English (A.I)","t1":41.8,"t2":39.0,"score":33.67,"max":50,"grade":"B"},{"name":"French/German","t1":25.6,"t2":30.7,"score":28.15,"max":40,"grade":"B"},{"name":"Religion","t1":33.0,"t2":35.2,"score":34.1,"max":40,"grade":"A"},{"name":"Citizenship","t1":8.1,"t2":8.65,"score":8.38,"max":10,"grade":"B"}],"total":367.75,"total_max":440,"show_terms":true},"21006":{"name":"ساندي ياسر جمال محمد السيد","seat":"21006","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":61.6,"t2":69.6,"score":65.6,"max":80,"grade":"B"},{"name":"English (O.L)","t1":56.65,"t2":56.4,"score":56.53,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":56.25,"t2":60.0,"score":58.12,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":58.5,"t2":56.5,"score":57.5,"max":60,"grade":"A"},{"name":"Physics","t1":50.85,"t2":47.17,"score":49.01,"max":60,"grade":"B"},{"name":"Chemistry","t1":54.92,"t2":55.8,"score":55.36,"max":60,"grade":"A"},{"name":"History","t1":58.0,"t2":46.6,"score":52.3,"max":60,"grade":"A"},{"name":"English (A.I)","t1":50.6,"t2":53.7,"score":43.46,"max":50,"grade":"A"},{"name":"French/German","t1":31.4,"t2":28.8,"score":30.1,"max":40,"grade":"B"},{"name":"Religion","t1":36.8,"t2":33.9,"score":35.35,"max":40,"grade":"A"},{"name":"Citizenship","t1":8.95,"t2":8.75,"score":8.85,"max":10,"grade":"A"}],"total":394.42,"total_max":440,"show_terms":true},"21007":{"name":"ضي محمود احمد محمد شبانه","seat":"21007","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":71.6,"t2":71.6,"score":71.6,"max":80,"grade":"A"},{"name":"English (O.L)","t1":57.6,"t2":58.2,"score":57.9,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":56.25,"t2":59.0,"score":57.62,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":59.25,"t2":58.5,"score":58.88,"max":60,"grade":"A"},{"name":"Physics","t1":56.85,"t2":56.55,"score":56.7,"max":60,"grade":"A"},{"name":"Chemistry","t1":59.1,"t2":59.0,"score":59.05,"max":60,"grade":"A"},{"name":"History","t1":58.0,"t2":54.7,"score":56.35,"max":60,"grade":"A"},{"name":"English (A.I)","t1":58.8,"t2":56.0,"score":47.83,"max":50,"grade":"A"},{"name":"French/German","t1":36.9,"t2":37.4,"score":37.15,"max":40,"grade":"A"},{"name":"Religion","t1":39.0,"t2":39.6,"score":39.3,"max":40,"grade":"A"},{"name":"Citizenship","t1":9.25,"t2":8.95,"score":9.1,"max":10,"grade":"A"}],"total":418.1,"total_max":440,"show_terms":true},"21008":{"name":"لانا احمد محمد سعيد علي","seat":"21008","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":67.2,"t2":69.6,"score":68.4,"max":80,"grade":"A"},{"name":"English (O.L)","t1":56.4,"t2":59.1,"score":57.75,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":55.0,"t2":57.0,"score":56.0,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":55.75,"t2":57.0,"score":56.38,"max":60,"grade":"A"},{"name":"Physics","t1":45.52,"t2":44.35,"score":44.94,"max":60,"grade":"B"},{"name":"Chemistry","t1":50.9,"t2":49.5,"score":50.2,"max":60,"grade":"B"},{"name":"History","t1":50.2,"t2":47.35,"score":48.78,"max":60,"grade":"B"},{"name":"English (A.I)","t1":54.3,"t2":47.3,"score":42.33,"max":50,"grade":"B"},{"name":"French/German","t1":37.2,"t2":33.6,"score":35.4,"max":40,"grade":"A"},{"name":"Religion","t1":37.0,"t2":38.7,"score":37.85,"max":40,"grade":"A"},{"name":"Citizenship","t1":9.1,"t2":7.9,"score":8.5,"max":10,"grade":"A"}],"total":382.44,"total_max":440,"show_terms":true},"21009":{"name":"ملك محمد صالح حمدي ابو طالب","seat":"21009","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":73.6,"t2":74.4,"score":74.0,"max":80,"grade":"A"},{"name":"English (O.L)","t1":60.0,"t2":57.6,"score":58.8,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":60.0,"t2":60.0,"score":60.0,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":60.0,"t2":60.0,"score":60.0,"max":60,"grade":"A"},{"name":"Physics","t1":56.85,"t2":58.05,"score":57.45,"max":60,"grade":"A"},{"name":"Chemistry","t1":59.1,"t2":59.0,"score":59.05,"max":60,"grade":"A"},{"name":"History","t1":59.0,"t2":54.65,"score":56.83,"max":60,"grade":"A"},{"name":"English (A.I)","t1":58.8,"t2":59.3,"score":49.21,"max":50,"grade":"A"},{"name":"French/German","t1":38.6,"t2":39.0,"score":38.8,"max":40,"grade":"A"},{"name":"Religion","t1":40.0,"t2":40.0,"score":40.0,"max":40,"grade":"A"},{"name":"Citizenship","t1":9.25,"t2":8.9,"score":9.07,"max":10,"grade":"A"}],"total":426.12,"total_max":440,"show_terms":true},"21010":{"name":"نور محمد عبد الغني دسوقي ابراهيم ( انثي )","seat":"21010","grade_level":"الثاني الثانوي","subjects":[{"name":"Arabic","t1":75.6,"t2":74.8,"score":75.2,"max":80,"grade":"A"},{"name":"English (O.L)","t1":59.4,"t2":58.2,"score":58.8,"max":60,"grade":"A"},{"name":"Pure Mathematics","t1":59.25,"t2":60.0,"score":59.62,"max":60,"grade":"A"},{"name":"Applied Mathematics","t1":59.25,"t2":59.5,"score":59.38,"max":60,"grade":"A"},{"name":"Physics","t1":56.85,"t2":55.05,"score":55.95,"max":60,"grade":"A"},{"name":"Chemistry","t1":58.4,"t2":58.75,"score":58.58,"max":60,"grade":"A"},{"name":"History","t1":57.0,"t2":54.1,"score":55.55,"max":60,"grade":"A"},{"name":"English (A.I)","t1":58.2,"t2":55.7,"score":47.46,"max":50,"grade":"A"},{"name":"French/German","t1":36.4,"t2":37.8,"score":37.1,"max":40,"grade":"A"},{"name":"Religion","t1":38.6,"t2":37.1,"score":37.85,"max":40,"grade":"A"},{"name":"Citizenship","t1":9.3,"t2":9.1,"score":9.2,"max":10,"grade":"A"}],"total":423.07,"total_max":440,"show_terms":true}};
 
-// Build lookup by sit_number too
-const BY_SEAT = {};
-Object.values(STUDENTS).forEach(s => { BY_SEAT[s.sit_number] = s; });
+let activeGrade = 'g1';
 
-function findStudent(query) {
-  query = query.trim();
-  if (STUDENTS[query]) return STUDENTS[query];
-  if (BY_SEAT[query]) return BY_SEAT[query];
-  return null;
+function selectGrade(g, btn) {
+  activeGrade = g;
+  document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const placeholder = g === 'g1' ? 'e.g. 11001' : 'e.g. 21001';
+  document.getElementById('student-id').placeholder = placeholder;
+  document.getElementById('student-id').value = '';
+  document.getElementById('student-id').classList.remove('error');
+  document.getElementById('error-msg').style.display = 'none';
 }
 
-function getInitials(name) {
-  const words = name.trim().split(/\s+/);
-  if (words.length >= 2) return words[0][0] + words[1][0];
-  return words[0].substring(0, 2);
+function findStudent(seat) {
+  const db = activeGrade === 'g1' ? STUDENTS_G1 : STUDENTS_G2;
+  return db[seat] || null;
 }
 
-function formatScore(score) {
-  if (score === null || score === undefined) return '—';
-  return Number.isInteger(score) ? score.toString() : score.toFixed(2).replace(/\.?0+$/, '');
+function fmt(v) {
+  if (v === null || v === undefined) return '—';
+  return Number.isInteger(v) ? String(v) : parseFloat(v.toFixed(2)).toString();
+}
+
+function initials(name) {
+  const w = name.trim().split(/\s+/);
+  return w.length >= 2 ? w[0][0] + w[1][0] : name.substring(0,2);
 }
 
 function searchStudent() {
   const input = document.getElementById('student-id');
-  const query = input.value.trim();
-  const errorEl = document.getElementById('error-msg');
+  const seat = input.value.trim();
+  const errEl = document.getElementById('error-msg');
+  input.classList.remove('error');
+  errEl.style.display = 'none';
 
-  if (!query) {
+  if (!seat) {
     input.classList.add('error');
-    errorEl.style.display = 'block';
-    errorEl.textContent = '⚠ Please enter a Student ID or Seat Number.';
+    errEl.textContent = '⚠ Please enter a Seat Number.';
+    errEl.style.display = 'block';
     return;
   }
 
-  input.classList.remove('error');
-  errorEl.style.display = 'none';
-
-  // Show loading
   document.getElementById('search-section').style.display = 'none';
   document.getElementById('loading-section').style.display = 'block';
-  document.getElementById('results-section').style.display = 'none';
 
   setTimeout(() => {
-    const student = findStudent(query);
+    const student = findStudent(seat);
     document.getElementById('loading-section').style.display = 'none';
 
     if (!student) {
       document.getElementById('search-section').style.display = 'flex';
-      document.getElementById('search-section').style.flexDirection = 'column';
       input.classList.add('error');
-      errorEl.style.display = 'block';
-      errorEl.textContent = '⚠ Student ID not found. Please check and try again.';
+      errEl.textContent = '⚠ Seat number not found. Please check and try again.';
+      errEl.style.display = 'block';
       return;
     }
-
     showResults(student);
-  }, 600);
+  }, 500);
 }
 
 function showResults(student) {
-  document.getElementById('avatar-initials').textContent = getInitials(student.name);
-  document.getElementById('result-name').textContent = student.name;
-  document.getElementById('result-id').textContent = student.sit_number;
-  document.getElementById('result-seat').textContent = student.sit_number;
-  document.getElementById('result-section').textContent = student.section;
+  document.getElementById('av-init').textContent = initials(student.name);
+  document.getElementById('r-name').textContent = student.name;
+  document.getElementById('r-seat').textContent = student.seat;
+  document.getElementById('r-grade-level').textContent = student.grade_level;
 
   const tbody = document.getElementById('grades-tbody');
   tbody.innerHTML = '';
 
   student.subjects.forEach(sub => {
     const tr = document.createElement('tr');
-    const score = sub.score !== null ? formatScore(sub.score) : '—';
     tr.innerHTML = `
-      <td class="subject-name">${sub.name}</td>
-      <td>${score}</td>
-      <td>${sub.max}</td>
-      <td><span class="grade-badge grade-${sub.grade}">${sub.grade}</span></td>
+      <td>${sub.name}</td>
+      <td class="center">${fmt(sub.t1)}</td>
+      <td class="center">${fmt(sub.t2)}</td>
+      <td class="center">${fmt(sub.score)} <span class="sub-score">/ ${sub.max}</span></td>
+      <td class="center"><span class="grade-dot g${sub.grade}">${sub.grade}</span></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Total row
-  const totalPct = student.total_max > 0 ? ((student.total / student.total_max) * 100).toFixed(1) : 0;
+  const pct = student.total_max > 0 ? ((student.total / student.total_max) * 100).toFixed(1) : 0;
   const tr = document.createElement('tr');
   tr.className = 'total-row';
   tr.innerHTML = `
     <td><strong>TOTAL</strong></td>
-    <td><strong>${formatScore(student.total)}</strong></td>
-    <td><strong>${student.total_max}</strong></td>
-    <td><strong>${totalPct}%</strong></td>
+    <td class="center">—</td>
+    <td class="center">—</td>
+    <td class="center"><strong>${fmt(student.total)} / ${student.total_max}</strong></td>
+    <td class="center"><strong>${pct}%</strong></td>
   `;
   tbody.appendChild(tr);
 
@@ -378,13 +264,11 @@ function showResults(student) {
 function newSearch() {
   document.getElementById('results-section').style.display = 'none';
   document.getElementById('search-section').style.display = 'flex';
-  document.getElementById('search-section').style.flexDirection = 'column';
   document.getElementById('student-id').value = '';
   document.getElementById('student-id').classList.remove('error');
   document.getElementById('error-msg').style.display = 'none';
 }
 
-// Enter key support
 document.getElementById('student-id').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') searchStudent();
   this.classList.remove('error');
